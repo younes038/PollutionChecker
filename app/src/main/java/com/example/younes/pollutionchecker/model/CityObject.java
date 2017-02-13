@@ -4,7 +4,8 @@ package com.example.younes.pollutionchecker.model;
  * Created by elyandoy on 13/02/2017.
  */
 
-public class CityObject {String name;
+public class CityObject {
+    String name;
     String url;
     int idx;
     String id;
