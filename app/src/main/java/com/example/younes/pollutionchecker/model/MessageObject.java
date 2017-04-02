@@ -2,14 +2,10 @@ package com.example.younes.pollutionchecker.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by elyandoy on 13/02/2017.
- */
-
 public class MessageObject {
-    long timestamp;
-    CityObject city;
-    ArrayList<IaqiObject> iaqi;
+    private long timestamp;
+    private CityObject city;
+    private ArrayList<IaqiObject> iaqi;
 
     public long getTimestamp() {
         return timestamp;

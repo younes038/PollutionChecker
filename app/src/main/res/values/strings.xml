@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PollutionChecker</string>
+    <string name="app_label"> Label</string>
+    <string name="action_search">Rechercher</string>
+    <string name="search_hint">Saisissez une ville...</string>
+    <string name="list_empty">Aucun résultat trouvé!</string>
 </resources>

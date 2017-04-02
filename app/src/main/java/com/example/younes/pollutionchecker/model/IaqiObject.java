@@ -2,14 +2,10 @@ package com.example.younes.pollutionchecker.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by elyandoy on 13/02/2017.
- */
-
 public class IaqiObject {
-    String p;
-    ArrayList<Integer> v;
-    String i;
+    private String p;
+    private ArrayList<Integer> v;
+    private String i;
 
     public String getP() {
         return p;

@@ -1,14 +1,11 @@
 package com.example.younes.pollutionchecker.model;
 
-/**
- * Created by elyandoy on 13/02/2017.
- */
-
-public class CityObject {String name;
-    String url;
-    int idx;
-    String id;
-    String[] geo;
+public class CityObject {
+    private String name;
+    private String url;
+    private int idx;
+    private String id;
+    private String[] geo;
 
     public String getName() {
         return name;

@@ -2,12 +2,8 @@ package com.example.younes.pollutionchecker.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by elyandoy on 13/02/2017.
- */
-
 public class RxsObject {
-    ArrayList<Data> obs;
+    private ArrayList<Data> obs;
 
     public ArrayList<Data> getObs() {
         return obs;

@@ -1,9 +1,5 @@
 package com.example.younes.pollutionchecker.model;
 
-/**
- * Created by elyandoy on 13/02/2017.
- */
-
 public class GlobalObject {
     private String dt;
     private RxsObject rxs;
