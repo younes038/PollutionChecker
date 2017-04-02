@@ -30,6 +30,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             app:srcCompat="@drawable/ic_search"
+            app:backgroundTint="@color/sun"
             app:fabSize="normal" />
 
     </android.support.design.widget.CoordinatorLayout>
