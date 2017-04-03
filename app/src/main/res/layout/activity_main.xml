@@ -5,12 +5,23 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.younes.pollutionchecker.MainActivity">
+
+    <TextView
+        android:id="@+id/nearest_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:padding="14dp"
+        android:text="@string/nearest_point" />
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/nearest_point">
 
         <!-- A RecyclerView with some commonly used attributes -->
         <android.support.v7.widget.RecyclerView

@@ -1,5 +1,6 @@
 package com.example.younes.pollutionchecker.adapter;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -7,19 +8,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.younes.pollutionchecker.DetailsActivity;
+import com.example.younes.pollutionchecker.MainActivity;
 import com.example.younes.pollutionchecker.R;
 import com.example.younes.pollutionchecker.db.DatabaseHandler;
 import com.example.younes.pollutionchecker.model.GlobalObject;
 import com.example.younes.pollutionchecker.model.MessageObject;
+import com.example.younes.pollutionchecker.services.AqicnAPI;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Binds data with the view that represents them
@@ -47,26 +57,23 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
-        public Button mButton;
-        public TextView global;
-        public TextView gps;
-        public TextView max;
-        public TextView min;
-        public TextView lastUpdate;
-        Context mCtx;
-        ArrayList<GlobalObject> mDataset;
+        public TextView polIndex, global, gps, max, min, lastUpdate;
+        public ImageButton refresh;
+        public Context mCtx;
+        public ArrayList<GlobalObject> mDataset;
 
         public ViewHolder(View v, Context ctx, ArrayList<GlobalObject> dataset) {
             super(v);
             this.mCtx = ctx;
             this.mDataset = dataset;
             v.setOnClickListener(this);
-            mButton = (Button) v.findViewById(R.id.button);
+            polIndex = (TextView) v.findViewById(R.id.polIndex);
             global = (TextView) v.findViewById(R.id.globalinfo);
-            gps = (TextView) v.findViewById(R.id.gps);
+            /*gps = (TextView) v.findViewById(R.id.gps);
             max = (TextView) v.findViewById(R.id.pm10Max);
-            min = (TextView) v.findViewById(R.id.pm10Min);
+            min = (TextView) v.findViewById(R.id.pm10Min);*/
             lastUpdate = (TextView) v.findViewById(R.id.lastUpdate);
+            refresh = (ImageButton) v.findViewById(R.id.refresh);
         }
 
         @Override
@@ -101,37 +108,71 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
      * @param position : position in dataset
      */
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that elementpublic Button mButton;
         MessageObject msg = mDataset.get(position).getRxs().getObs().get(0).getMsg();
 
-        for(int i=0;i<msg.getIaqi().size();i++) {
-            if(msg.getIaqi().get(i).getP().contains("pm10")) {
-                holder.mButton.setText(msg.getIaqi().get(i).getV().get(0).toString());
-                holder.max.setText(msg.getIaqi().get(i).getV().get(2).toString());
-                holder.min.setText(msg.getIaqi().get(i).getV().get(1).toString());
-                if(msg.getIaqi().get(i).getV().get(0)<50) {
-                    holder.mButton.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.green));
-                } else if(msg.getIaqi().get(i).getV().get(0)<100) {
-                    holder.mButton.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.orange));
-                } else {
-                    holder.mButton.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
-                }
-            }
-            if(msg.getIaqi().get(i).getP().contains("t")) {
-                String city = msg.getCity().getName();
-                if(msg.getCity().getName().length()>20) {
-                    city = msg.getCity().getName().substring(0,20)+"...";
-                }
-                holder.global.setText(city+" "+msg.getIaqi().get(i).getV().get(0)+"°C");
-            }
+        if(msg.getAqi() < 50) {
+            holder.polIndex.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.green));
+        } else if(msg.getAqi() < 100) {
+            holder.polIndex.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.orange));
+        } else {
+            holder.polIndex.setBackgroundColor(ContextCompat.getColor(mCtx, R.color.red));
         }
+
+        holder.polIndex.setText(String.valueOf(msg.getAqi()));
+        //holder.max.setText(msg.getIaqi().get(i).getV().get(2).toString());
+        //holder.min.setText(msg.getIaqi().get(i).getV().get(1).toString());
+
+        String city = msg.getCity().getName();
+        if(city.length()>20) {
+            city = city.substring(0,20)+"...";
+        }
+        holder.global.setText(city+" "+msg.getIaqi().get(0).getV().get(0)+"°C");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(msg.getTimestamp()*1000);
         holder.lastUpdate.setText(calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE));
-        holder.gps.setText(msg.getCity().getGeo()[0].substring(0,6)+", "+msg.getCity().getGeo()[1].substring(0,6));
+        //holder.gps.setText(msg.getCity().getGeo()[0].substring(0,6)+", "+msg.getCity().getGeo()[1].substring(0,6));
+        final String ncity = city;
+        holder.refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mCtx, mCtx.getResources().getString(R.string.msg_refresh) + ncity, Toast.LENGTH_SHORT).show();
+                updateCityData(String.valueOf(mDataset.get(0).getRxs().getObs().get(0).getMsg().getCity().getIdx()), position);
+            }
+        });
+    }
+
+    public void updateCityData(String city, final int pos) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(AqicnAPI.baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .callbackExecutor(Executors.newFixedThreadPool(1))
+                .build();
+
+        // prepare call in Retrofit 2
+        AqicnAPI aqicnObj = retrofit.create(AqicnAPI.class);
+        Call<GlobalObject> call = aqicnObj.getCityFeed(city, null);
+
+        // asynchronous call
+        call.enqueue(new Callback<GlobalObject>() {
+            @Override
+            public void onResponse(Call<GlobalObject> call, Response<GlobalObject> response) {
+                if (response.isSuccessful()) {
+                    // request successful (status code 200, 201)
+                    GlobalObject result = response.body();
+                    mDataset.get(1).setDt(result.getDt());
+                    mDataset.get(1).setRxs(result.getRxs());
+                    notifyDataSetChanged();
+                } else {}
+            }
+            @Override
+            public void onFailure(Call<GlobalObject> call, Throwable t) {
+                // something went completely south (like no internet connection)
+            }
+        });
     }
 
     /**
