@@ -11,4 +11,7 @@
     <color name="green">#32CD32</color>
     <color name="orange">#f4c500</color>
     <color name="red">#FF0000</color>
+    <color name="sky">#0CD8FF</color>
+    <color name="sun">#F5E80F</color>
+    <color name="dark">#1a1a1a</color>
 </resources>
