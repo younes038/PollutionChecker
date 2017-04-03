@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="TextView"
+            android:text=""
             android:textColor="#222" />
 
         <ImageButton
@@ -23,7 +23,8 @@
             android:layout_height="48dp"
             android:layout_gravity="end"
             android:background="@null"
-            app:srcCompat="@drawable/ic_add" />
+            app:srcCompat="@drawable/ic_add"
+            android:contentDescription="@string/contentDesc" />
 
     </android.support.design.widget.CoordinatorLayout>
 

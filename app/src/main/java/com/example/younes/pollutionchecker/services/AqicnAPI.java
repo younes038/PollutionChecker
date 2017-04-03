@@ -1,18 +1,14 @@
 package com.example.younes.pollutionchecker.services;
 
+import com.example.younes.pollutionchecker.model.GeolocationObject;
 import com.example.younes.pollutionchecker.model.GlobalObject;
 import com.example.younes.pollutionchecker.model.GlobalSearch;
-
-import org.json.JSONObject;
+import com.example.younes.pollutionchecker.model.NearestObject;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-/**
- * Created by elyandoy on 13/02/2017.
- */
 
 public interface AqicnAPI {
     String baseURL = "https://api.waqi.info/";
@@ -25,6 +21,11 @@ public interface AqicnAPI {
     @GET("nsearch/station/{city}")
     Call<GlobalSearch> getStations(@Path("city") String city);
 
-    @GET("/feed/geo:{lat};:{lng}/")
-    Call<JSONObject> getNearestCity(@Path("lat") Double lat, @Path("lng") Double lng, @Query(TOKEN) String token);
+    @GET("feed/geo:{lat};{lng}/")
+    Call<GeolocationObject> getNearestCity(@Path("lat") String lat, @Path("lng") String lng, @Query(TOKEN) String token);
+
+    /*
+    @GET("mapq/nearest")
+    Call<NearestObject> getNearestCity();
+    */
 }

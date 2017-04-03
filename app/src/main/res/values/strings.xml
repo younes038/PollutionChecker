@@ -1,7 +1,28 @@
 <resources>
     <string name="app_name">PollutionChecker</string>
     <string name="app_label"> Label</string>
-    <string name="action_search">Rechercher</string>
-    <string name="search_hint">Saisissez une ville...</string>
+
     <string name="list_empty">Aucun résultat trouvé!</string>
+    <string name="nearest_point">Point de pollution le plus proche :\n</string>
+    <string name="contentDesc"></string>
+    <string name="msg_refresh">Vous avez actualisé\u00A0</string>
+
+    <!-- Menu -->
+    <string name="send_label">Envoyer</string>
+    <string name="refresh_label">Actualiser</string>
+
+    <!-- Search -->
+    <string name="action_search">Rechercher</string>
+    <string name="search_label">Rechercher</string>
+    <string name="search_hint">Saisissez une ville...</string>
+
+    <!-- Email -->
+    <string name="mail_subject">Air Quality Index</string>
+    <string name="mail_message">Test</string>
+    <string name="mail_error">Sorry, there was an error.</string>
+
+    <!-- Widget -->
+    <string name="appwidget_text">PollutionChecker</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

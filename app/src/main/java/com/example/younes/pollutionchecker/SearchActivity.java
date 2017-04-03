@@ -35,15 +35,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class SearchActivity extends AppCompatActivity {
-
     // Properties
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<SearchObject> searchedCities = new ArrayList<SearchObject>();
+    private ArrayList<SearchObject> searchedCities = new ArrayList<>();
     private DatabaseHandler db;
-    SearchView mSearchView;
-    TextView emptyView;
+    private SearchView mSearchView;
+    private TextView emptyView;
 
     // Override methods
     @Override
@@ -65,14 +64,13 @@ public class SearchActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // do something on text submit
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 // do something when text changes
-                searchedCities = new ArrayList<SearchObject>();
+                searchedCities = new ArrayList<>();
                 mAdapter = new SearchAdapter(ctx, searchedCities);
                 mRecyclerView.setAdapter(mAdapter);
                 searchCity(mSearchView.getQuery().toString());
@@ -134,11 +132,9 @@ public class SearchActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        // prepare call in Retrofit 2
         AqicnAPI aqicnObj = retrofit.create(AqicnAPI.class);
         Call<GlobalSearch> call = aqicnObj.getStations(inputSearch);
 
-        //asynchronous call
         call.enqueue(new Callback<GlobalSearch>() {
             @Override
             public void onResponse(Call<GlobalSearch> call, Response<GlobalSearch> response) {
@@ -151,24 +147,16 @@ public class SearchActivity extends AppCompatActivity {
                         }
                         showLayout(searchedCities.size());
                         mAdapter.notifyDataSetChanged();
-                    } catch(Exception e) {
+                    } catch(Exception e) {}
 
-                    }
-
-                } else {
-                    // response received but request not successful (like 400,401,403 etc)
-                    // Handle errors
-                }
+                } else {}
             }
 
             @Override
-            public void onFailure(Call<GlobalSearch> call, Throwable t) {
-                // something went completely south (like no internet connection)
-            }
+            public void onFailure(Call<GlobalSearch> call, Throwable t) {}
         });
     }
 
-    //Methods
     /**
      * Displays either the recyclerview
      * or the textview depending on dataset size
@@ -183,13 +171,4 @@ public class SearchActivity extends AppCompatActivity {
             emptyView.setVisibility(View.GONE);
         }
     }
-
-    public static void goBack(SearchObject sObj) {
-        /*Intent intent = new Intent(SearchActivity.this, MainActivity.class);
-        //Get the value of the item you clicked
-        intent.putExtra("cityIdx", mtList.get(pos).getIdx());
-        intent.putExtra("cityName", mtList.get(pos).getCityName());
-        startActivity(intent);*/
-    }
-
 }

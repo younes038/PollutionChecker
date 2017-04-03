@@ -24,9 +24,7 @@ public class DatabaseHandler implements DatabaseStruct{
 
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
-
     private final Context mCtx;
-
     public DatabaseHandler(Context mCtx) {
         this.mCtx = mCtx;
     }

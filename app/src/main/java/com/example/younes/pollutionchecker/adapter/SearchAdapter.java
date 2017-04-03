@@ -27,6 +27,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private DatabaseHandler db;
     ViewHolder viewHolder;
 
+    public SearchAdapter(Context context, ArrayList<SearchObject> list) {
+        this.mcontext = context;
+        this.mtList = list;
+        this.db = new DatabaseHandler(context);
+    }
+
     // initializes some private fields to be used by RecyclerView.
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -36,12 +42,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             super(v);
             city = (TextView) v.findViewById(R.id.search_item);
         }
-    }
-
-    public SearchAdapter(Context context, ArrayList<SearchObject> list) {
-        mtList = list;
-        mcontext = context;
-        db = new DatabaseHandler(context);
     }
 
     // Called when RecyclerView needs a new RecyclerView.ViewHolder of the given type to represent an item.
@@ -57,6 +57,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position ) {
         viewHolder.city.setText(mtList.get(position).getCityName());
+
+        // if click on item of search list we add to main list
         final int pos = position;
         viewHolder.city.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +66,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 db.open();
                 db.add(mtList.get(pos));
                 db.close();
-                Toast.makeText(mcontext, viewHolder.city.getText(), Toast.LENGTH_SHORT).show();
             }
         });
     }

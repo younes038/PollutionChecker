@@ -1,8 +1,13 @@
 package com.example.younes.pollutionchecker.model;
 
-/**
- * Created by younes on 02/04/2017.
- */
-
 public class GeolocationObject {
+    private DataGeo data;
+
+    public DataGeo getData() {
+        return data;
+    }
+
+    public void setData(DataGeo data) {
+        this.data = data;
+    }
 }
