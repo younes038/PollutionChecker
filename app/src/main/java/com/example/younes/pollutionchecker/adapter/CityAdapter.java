@@ -1,6 +1,7 @@
 package com.example.younes.pollutionchecker.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.younes.pollutionchecker.DetailsActivity;
 import com.example.younes.pollutionchecker.R;
 import com.example.younes.pollutionchecker.db.DatabaseHandler;
 import com.example.younes.pollutionchecker.model.GlobalObject;
@@ -24,33 +27,9 @@ import java.util.Collections;
  */
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
     //Properties
-    private ArrayList<GlobalObject> mDataset;
     private Context mCtx;
+    private ArrayList<GlobalObject> mDataset;
     private DatabaseHandler db;
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public Button mButton;
-        public TextView global;
-        public TextView gps;
-        public TextView max;
-        public TextView min;
-        public TextView lastUpdate;
-
-        public ViewHolder(View v) {
-            super(v);
-            mButton = (Button) v.findViewById(R.id.button);
-            global = (TextView) v.findViewById(R.id.globalinfo);
-            gps = (TextView) v.findViewById(R.id.gps);
-            max = (TextView) v.findViewById(R.id.pm10Max);
-            min = (TextView) v.findViewById(R.id.pm10Min);
-            lastUpdate = (TextView) v.findViewById(R.id.lastUpdate);
-        }
-    }
-
 
     /**
      * Provide a suitable constructor
@@ -58,11 +37,47 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
      * @param initialCities
      */
     public CityAdapter(Context ctx, ArrayList<GlobalObject> initialCities) {
-        mCtx = ctx;
-        mDataset = initialCities;
-        db = new DatabaseHandler(ctx);
+        this.mCtx = ctx;
+        this.mDataset = initialCities;
+        this.db = new DatabaseHandler(ctx);
     }
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        // each data item is just a string in this case
+        public Button mButton;
+        public TextView global;
+        public TextView gps;
+        public TextView max;
+        public TextView min;
+        public TextView lastUpdate;
+        Context mCtx;
+        ArrayList<GlobalObject> mDataset;
+
+        public ViewHolder(View v, Context ctx, ArrayList<GlobalObject> dataset) {
+            super(v);
+            this.mCtx = ctx;
+            this.mDataset = dataset;
+            v.setOnClickListener(this);
+            mButton = (Button) v.findViewById(R.id.button);
+            global = (TextView) v.findViewById(R.id.globalinfo);
+            gps = (TextView) v.findViewById(R.id.gps);
+            max = (TextView) v.findViewById(R.id.pm10Max);
+            min = (TextView) v.findViewById(R.id.pm10Min);
+            lastUpdate = (TextView) v.findViewById(R.id.lastUpdate);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Intent intent = new Intent(this.mCtx, DetailsActivity.class);
+            // Pass values of the clicked item
+            intent.putExtra("aqi", mDataset.get(position).getRxs().getObs().get(0).getMsg().getAqi());
+            this.mCtx.startActivity(intent);
+        }
+    }
 
     /**
      * Create new views (invoked by the layout manager)
@@ -75,7 +90,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_view, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v, mCtx, mDataset);
         return vh;
     }
 
@@ -86,7 +101,7 @@ public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder> {
      * @param position : position in dataset
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that elementpublic Button mButton;
         MessageObject msg = mDataset.get(position).getRxs().getObs().get(0).getMsg();
